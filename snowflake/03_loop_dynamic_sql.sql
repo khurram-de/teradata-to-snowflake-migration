@@ -6,18 +6,21 @@ $$
 DECLARE
     sql_command STRING;
     initiation_date DATE;
+    total_rows INTEGER := 0;
 BEGIN
     initiation_date := start_date;
     
     while(initiation_date <= end_date) DO
-        INSERT INTO customer_target
+        sql_command := 'INSERT INTO customer_target
         SELECT * FROM customer_stage
-        WHERE event_date = '${initiation_date}';
-        DATEADD(DAY, 1, initiation_date);
+        WHERE event_date =''' ||initiation_date||''';';
+        EXECUTE IMMEDIATE sql_command;
+        total_rows := total_rows + SQLROWCOUNT;
+        initiation_date := DATEADD(DAY, 1, initiation_date);
         END WHILE;
-
+    RETURN 'Inserted ' || total_rows || ' into customer_target tbl';
 EXCEPTION
     WHEN OTHER THEN
-        RAISE
+        RAISE;
 END;
 $$

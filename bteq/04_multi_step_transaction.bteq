@@ -1,0 +1,29 @@
+.LOGON tdprod/myuser,mypassword;
+
+BT;
+
+INSERT INTO cdr_target
+SELECT * FROM cdr_stage;
+
+.IF ERRORCODE <> 0 THEN .GOTO ERROREXIT;
+
+ET;
+
+BT;
+
+UPDATE customer_summary
+SET total_calls = total_calls + 1
+WHERE customer_id IN (SELECT customer_id FROM cdr_stage);
+
+.IF ERRORCODE <> 0 THEN .GOTO ERROREXIT;
+
+ET;
+
+.IF ERRORCODE <> 0 THEN .GOTO ERROREXIT;
+
+.QUIT 0;
+
+.LABEL ERROREXIT
+BT;
+ET;
+.QUIT 12;

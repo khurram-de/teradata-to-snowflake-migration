@@ -1,0 +1,22 @@
+.LOGON tdprod/myuser,mypassword;
+
+.IF ERRORCODE <> 0 THEN .GOTO ERROREXIT;
+
+SEL COUNT(*) FROM customer_stage INTO :row_count;
+
+.IF :row_count = 0 THEN .GOTO EMPTYEXIT;
+.IF :row_count > 1000000 THEN .GOTO LARGEEXIT;
+
+-- normal load
+INSERT INTO customer_target SELECT * FROM customer_stage;
+.IF ERRORCODE <> 0 THEN .GOTO ERROREXIT;
+.QUIT 0;
+
+.LABEL EMPTYEXIT
+.QUIT 8;
+
+.LABEL LARGEEXIT
+.QUIT 16;
+
+.LABEL ERROREXIT
+.QUIT 12;

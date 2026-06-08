@@ -1,0 +1,19 @@
+.LOGON tdprod/myuser,mypassword;
+
+.SET ERRORLEVEL SEVERITY 8;
+
+BT;
+
+INSERT INTO customer_target
+SELECT * FROM customer_stage;
+
+.IF ERRORCODE <> 0 THEN .GOTO ERROREXIT;
+
+ET;
+
+.IF ERRORCODE <> 0 THEN .GOTO ERROREXIT;
+
+.QUIT 0;
+
+.LABEL ERROREXIT
+.QUIT 12;

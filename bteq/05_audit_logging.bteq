@@ -1,0 +1,23 @@
+.LOGON tdprod/myuser,mypassword;
+
+BT;
+INSERT INTO cdr_target
+SELECT * FROM cdr_stage;
+.IF ERRORCODE <> 0 THEN .GOTO ERROREXIT;
+ET;
+
+BT;
+UPDATE customer_summary
+SET total_calls = total_calls + 1
+WHERE customer_id IN (SELECT customer_id FROM cdr_stage);
+.IF ERRORCODE <> 0 THEN .GOTO ERROREXIT;
+ET;
+
+-- No audit logging -- execution details written to flat BTEQ log file only
+-- Log file location: /logs/bteq/multi_step_transaction_YYYYMMDD.log
+-- Not queryable, not structured, requires manual inspection on failure
+
+.QUIT 0;
+
+.LABEL ERROREXIT
+.QUIT 12;

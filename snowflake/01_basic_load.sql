@@ -12,7 +12,6 @@ BEGIN
     RETURN 'Loaded ' || row_count || ' rows into customer_data table.';
 EXCEPTION
     WHEN OTHERS THEN
-        RETURN 'Error loading data: ' || SQLERRM;
         RAISE;
 END;
 $$;

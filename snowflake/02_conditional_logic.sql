@@ -13,7 +13,7 @@ BEGIN
         RETURN 'Source too large, aborting';
     ELSE 
         INSERT INTO customer_data SELECT * FROM customer_stage;
-        RETURN 'Inserted ' || SQLROWCOUNT || ' into customer_data'
+        RETURN 'Inserted ' || SQLROWCOUNT || ' into customer_data';
     END IF;
 EXCEPTION 
     WHEN OTHER THEN
